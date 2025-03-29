@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gửi Tin Nhắn Tình Yêu</title>
+    <title>Đăng Nhập - Trang Tình Yêu</title>
     <link rel="stylesheet" href="style.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        .content-box {
+        .login-box {
             position: relative;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 500px;
+            max-width: 400px;
             margin: 0 auto;
         }
 
-        .content-box::before {
+        .login-box::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -39,111 +35,65 @@
             100% { transform: translateX(100%) rotate(45deg); }
         }
 
-        .form-title {
+        .welcome-text {
+            font-size: 1.2em;
             color: #ff4b4b;
-            font-size: 1.8em;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            animation: titleGlow 2s ease-in-out infinite;
         }
 
-        .form-description {
-            color: #666;
-            margin-bottom: 30px;
-            line-height: 1.6;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ff4b4b;
-            font-weight: bold;
-        }
-
-        input {
+        .heart-container {
+            position: fixed;
             width: 100%;
-            padding: 15px;
-            border: 2px solid #ffd3d3;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
-        input:focus {
-            outline: none;
-            border-color: #ff4b4b;
-            box-shadow: 0 0 15px rgba(255, 75, 75, 0.2);
-            transform: translateY(-2px);
-        }
-
-        button {
-            width: 100%;
-            background: linear-gradient(45deg, #ff4b4b, #ff6b6b);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(255, 75, 75, 0.3);
-        }
-
-        .status-message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .success-icon {
-            color: #4CAF50;
+        .heart {
+            position: absolute;
             font-size: 24px;
-            margin-right: 10px;
-        }
-
-        .error-icon {
             color: #ff4b4b;
-            font-size: 24px;
-            margin-right: 10px;
+            animation: floatHeart 4s ease-in-out infinite;
+        }
+
+        @keyframes floatHeart {
+            0% { 
+                transform: translateY(100vh) scale(0) rotate(0deg); 
+                opacity: 0; 
+            }
+            50% { 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(-100vh) scale(1) rotate(360deg); 
+                opacity: 0; 
+            }
         }
     </style>
 </head>
 <body>
-    <div class="floating-hearts" id="floatingHearts"></div>
+    <div class="heart-container" id="heartContainer"></div>
     <div class="container">
-        <div class="content-box">
-            <h2 class="form-title">Đơn Confirm chiện Tình Yêu</h2>
-            <p class="form-description">Nhập email của em để nhận tin nhắn tình yêu đặc biệt</p>
+        <div class="login-box">
+            <h2>Chào Mừng Đến Với Trang Tình Yêu</h2>
+            <p class="welcome-text">Nhập mã số bí mật để tiếp tục</p>
             
-            <form id="emailForm">
+            <form id="loginForm">
                 <div class="input-group">
-                    <label for="email">Email chính chủ của em đó nha</label>
-                    <input type="email" id="email" placeholder="Nhập gmail của em vào đây" required>
+                    <input type="password" id="code" placeholder="Nhập mã số bí mật" required>
                 </div>
-                <button type="submit">Gửi Tin Nhắn</button>
+                <button type="submit">Đăng Nhập</button>
             </form>
-            <div id="status" class="status-message"></div>
         </div>
     </div>
     <script>
-        // Initialize EmailJS
-        emailjs.init("jumWUf-gaKptymw9v");
-
         // Create floating hearts
         function createHeart() {
             const heart = document.createElement('div');
@@ -151,7 +101,7 @@
             heart.innerHTML = '❤';
             heart.style.left = Math.random() * 100 + 'vw';
             heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            document.getElementById('floatingHearts').appendChild(heart);
+            document.getElementById('heartContainer').appendChild(heart);
             
             setTimeout(() => {
                 heart.remove();
@@ -161,58 +111,34 @@
         // Create hearts periodically
         setInterval(createHeart, 300);
 
-        // Handle form submission
-        document.getElementById('emailForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const statusDiv = document.getElementById('status');
-            
-            // Show loading message
-            statusDiv.innerHTML = '<span class="loading-icon">⏳</span> Đang gửi tin nhắn...';
-            statusDiv.style.color = '#ff4b4b';
-            statusDiv.style.animation = 'pulse 1s infinite';
-
-            // Prepare message content
-            const message = `Kính gửi: Ba mẹ của Hồng Anh
-
-Và người tôi yêu thương nhất, Hồng Anh!
-
-Hôm nay, tôi - Nguyễn Minh Tuấn, xin được viết đơn này để chính thức xác nhận tình yêu của tôi dành cho Nguyễn Hồng Anh. Tôi muốn khẳng định rằng tình yêu của chúng tôi là chân thành, nghiêm túc và hướng đến một tương lai hạnh phúc bên nhau.
-
-Tôi cam kết sẽ luôn yêu thương, chăm sóc và bảo vệ Hồng Anh. Tôi sẽ cố gắng hết sức để làm cho cô ấy hạnh phúc và xây dựng một mái ấm gia đình tràn đầy tình yêu thương.
-
-Kính mong ba mẹ chấp nhận tình yêu của chúng con và cho phép chúng con được cùng nhau xây dựng hạnh phúc.
-
-Trân trọng,
-Nguyễn Minh Tuấn`;
-
-            // Prepare template parameters
-            const templateParams = {
-                to_email: email,
-                message: message,
-                to_name: 'Hồng Anh và gia đình',
-                from_name: 'Nguyễn Minh Tuấn',
-                subject: 'Đơn Xác Nhận Tình Yêu'
-            };
-
-            // Send email using EmailJS
-            emailjs.send('service_ns4f0m4', 'template_mzockpa', templateParams)
-                .then(function(response) {
-                    statusDiv.style.animation = '';
-                    statusDiv.innerHTML = '<span class="success-icon">✓</span> Gửi tin nhắn thành công!';
-                    statusDiv.style.color = '#4CAF50';
-                    document.getElementById('email').value = '';
-                    
-                    // Create celebration effect
-                    for(let i = 0; i < 10; i++) {
-                        setTimeout(createHeart, i * 100);
-                    }
-                }, function(error) {
-                    statusDiv.style.animation = '';
-                    statusDiv.innerHTML = '<span class="error-icon">✕</span> Gửi tin nhắn thất bại. Vui lòng thử lại.';
-                    statusDiv.style.color = '#ff4b4b';
-                    console.log('Error:', error);
-                });
+            const code = document.getElementById('code').value;
+            if (code === '27032024') {
+                // Lưu trạng thái đăng nhập
+                sessionStorage.setItem('isLoggedIn', 'true');
+                
+                // Thêm hiệu ứng chuyển trang
+                document.querySelector('.login-box').style.transform = 'scale(0.8)';
+                document.querySelector('.login-box').style.opacity = '0';
+                
+                // Tạo hiệu ứng trái tim chào mừng
+                for(let i = 0; i < 10; i++) {
+                    setTimeout(createHeart, i * 100);
+                }
+                
+                setTimeout(() => {
+                    window.location.href = 'message.html';
+                }, 500);
+            } else {
+                // Hiệu ứng rung khi nhập sai
+                const input = document.getElementById('code');
+                input.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+                alert('Mã số không chính xác! Vui lòng thử lại.');
+            }
         });
     </script>
 </body>

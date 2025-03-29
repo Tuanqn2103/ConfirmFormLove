@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Tin Nhắn Tình Yêu</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        .content-box {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .content-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .form-title {
+            color: #ff4b4b;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        .form-description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ff4b4b;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ffd3d3;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff4b4b;
+            box-shadow: 0 0 15px rgba(255, 75, 75, 0.2);
+            transform: translateY(-2px);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(45deg, #ff4b4b, #ff6b6b);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 75, 75, 0.3);
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .success-icon {
+            color: #4CAF50;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .error-icon {
+            color: #ff4b4b;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    <div class="container">
+        <div class="content-box">
+            <h2 class="form-title">Gửi Tin Nhắn Tình Yêu</h2>
+            <p class="form-description">Nhập email của bạn để nhận tin nhắn tình yêu đặc biệt</p>
+            
+            <form id="emailForm">
+                <div class="input-group">
+                    <label for="email">Email của bạn</label>
+                    <input type="email" id="email" placeholder="example@email.com" required>
+                </div>
+                <button type="submit">Gửi Tin Nhắn</button>
+            </form>
+            <div id="status" class="status-message"></div>
+        </div>
+    </div>
+    <script>
+        // Kiểm tra xem đã đăng nhập chưa
+        if (!sessionStorage.getItem('isLoggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        // Initialize EmailJS
+        emailjs.init("jumWUf-gaKptymw9v");
+
+        // Create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.getElementById('floatingHearts').appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Create hearts periodically
+        setInterval(createHeart, 300);
+
+        // Handle form submission
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const statusDiv = document.getElementById('status');
+            
+            // Show loading message
+            statusDiv.innerHTML = '<span class="loading-icon">⏳</span> Đang gửi tin nhắn...';
+            statusDiv.style.color = '#ff4b4b';
+            statusDiv.style.animation = 'pulse 1s infinite';
+
+            // Prepare message content
+            const message = `Kính gửi: Ba mẹ của Hồng Anh
+
+Và người tôi yêu thương nhất, Hồng Anh!
+
+Hôm nay, tôi - Nguyễn Minh Tuấn, xin được viết đơn này để chính thức xác nhận tình yêu của tôi dành cho Nguyễn Hồng Anh. Tôi muốn khẳng định rằng tình yêu của chúng tôi là chân thành, nghiêm túc và hướng đến một tương lai hạnh phúc bên nhau.
+
+Tôi cam kết sẽ luôn yêu thương, chăm sóc và bảo vệ Hồng Anh. Tôi sẽ cố gắng hết sức để làm cho cô ấy hạnh phúc và xây dựng một mái ấm gia đình tràn đầy tình yêu thương.
+
+Kính mong ba mẹ chấp nhận tình yêu của chúng con và cho phép chúng con được cùng nhau xây dựng hạnh phúc.
+
+Trân trọng,
+Nguyễn Minh Tuấn`;
+
+            // Prepare template parameters
+            const templateParams = {
+                to_email: email,
+                message: message,
+                to_name: 'Hồng Anh và gia đình',
+                from_name: 'Nguyễn Minh Tuấn',
+                subject: 'Đơn Xác Nhận Tình Yêu'
+            };
+
+            // Send email using EmailJS
+            emailjs.send('service_ns4f0m4', 'template_mzockpa', templateParams)
+                .then(function(response) {
+                    statusDiv.style.animation = '';
+                    statusDiv.innerHTML = '<span class="success-icon">✓</span> Gửi tin nhắn thành công!';
+                    statusDiv.style.color = '#4CAF50';
+                    document.getElementById('email').value = '';
+                    
+                    // Create celebration effect
+                    for(let i = 0; i < 10; i++) {
+                        setTimeout(createHeart, i * 100);
+                    }
+                }, function(error) {
+                    statusDiv.style.animation = '';
+                    statusDiv.innerHTML = '<span class="error-icon">✕</span> Gửi tin nhắn thất bại. Vui lòng thử lại.';
+                    statusDiv.style.color = '#ff4b4b';
+                    console.log('Error:', error);
+                });
+        });
+    </script>
+</body>
+</html> 
