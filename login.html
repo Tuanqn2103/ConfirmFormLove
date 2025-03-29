@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Trang Tình Yêu</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-box {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .welcome-text {
+            font-size: 1.2em;
+            color: #ff4b4b;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .heart-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            color: #ff4b4b;
+            animation: floatHeart 4s ease-in-out infinite;
+        }
+
+        @keyframes floatHeart {
+            0% { 
+                transform: translateY(100vh) scale(0) rotate(0deg); 
+                opacity: 0; 
+            }
+            50% { 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(-100vh) scale(1) rotate(360deg); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-container" id="heartContainer"></div>
+    <div class="container">
+        <div class="login-box">
+            <h2>Chào Mừng Đến Với Trang Tình Yêu</h2>
+            <p class="welcome-text">Nhập mã số bí mật để tiếp tục</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="password" id="code" placeholder="Nhập mã số bí mật" required>
+                </div>
+                <button type="submit">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.getElementById('heartContainer').appendChild(heart);
+            
+            // Remove heart after animation
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Create hearts periodically
+        setInterval(createHeart, 300);
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+            if (code === '27032024') {
+                // Thêm hiệu ứng chuyển trang
+                document.querySelector('.login-box').style.transform = 'scale(0.8)';
+                document.querySelector('.login-box').style.opacity = '0';
+                
+                // Tạo hiệu ứng trái tim chào mừng
+                for(let i = 0; i < 10; i++) {
+                    setTimeout(createHeart, i * 100);
+                }
+                
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            } else {
+                // Hiệu ứng rung khi nhập sai
+                const input = document.getElementById('code');
+                input.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+                alert('Mã số không chính xác! Vui lòng thử lại.');
+            }
+        });
+    </script>
+</body>
+</html> 
